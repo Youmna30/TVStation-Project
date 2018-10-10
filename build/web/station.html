@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script>
+            function sendreq(){
+            var name=document.getElementById("name").value;
+            var url=document.getElementById("url").value;
+            var country=document.getElementById("country").value;
+            
+            if(name=="" || url=="" || country=="")
+            {
+                 document.getElementById("show_div").innerHTML="Please, fill out all the fields";
+
+            }
+            else
+            {
+            var xmlhttp=new XMLHttpRequest(); 
+            xmlhttp.open("POST","addStation",true);
+            xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xmlhttp.send("&name="+ name+"&url="+url+"&country="+country);
+            xmlhttp.onreadystatechange=function(){
+                if(this.readyState===4&&this.status===200){
+                    var x=xmlhttp.responseText;
+                    if(x=="")
+                    {
+                    document.getElementById("show_div").innerHTML="Wait for confirmation";
+                    }
+                    else
+                    {
+                    document.getElementById("show_div").innerHTML=x;
+                     }
+            };    
+        }
+    }
+
+
+            }
+        </script>
+    </head>
+    <body>
+        <label>Name</label><br>
+        <input type="text" name="name" id="name"><br>
+        <label>URL</label><br>
+        <input type="text" name="url" id="url"><br>
+        <label>Country</label><br>
+        <input type="text" name="country" id="country"><br>
+        <input type="submit" onclick="sendreq()" value="Add">
+        <div id="show_div"></div>        
+
+
+    </body>
+</html>
