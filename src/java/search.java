@@ -8,6 +8,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.logging.Level;
@@ -48,18 +49,23 @@ public class search extends HttpServlet {
             String recvbuff="";
             String query="https://www.googleapis.com/youtube/v3/search?q="+searchQuery+"&key=AIzaSyCRJqo_zdv1gDIsSkczJOFTnKcm2coSWEA&maxResults=20&part=snippet&type=video";
             URL jsonpage = new URL(query);
-            URLConnection urlcon = jsonpage.openConnection();
+            HttpURLConnection urlcon = (HttpURLConnection) jsonpage.openConnection();
+            if(urlcon.getResponseCode() != 200){
+                request.setAttribute("json", "error");
+                RequestDispatcher rd1= request.getRequestDispatcher("resultSearch.jsp");
+                rd1.forward(request, response);
+            }
+
             BufferedReader buffread = new BufferedReader(new InputStreamReader(urlcon.getInputStream()));
-            
+            boolean results=false;
             while ((recv = buffread.readLine()) != null)
             {
+                results=true;
                //System.out.println(buffread.readLine());
 
                 recvbuff += recv;
             }
             buffread.close();
-
-          
           
         request.setAttribute("json", recvbuff);
         RequestDispatcher rd1= request.getRequestDispatcher("resultSearch.jsp");

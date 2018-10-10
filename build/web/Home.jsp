@@ -31,6 +31,19 @@
 
                 }; 
             }
+            function check(){
+                var x = document.getElementById("search").value;
+                if(x=="")
+                {
+                    document.getElementById("submit").disabled = true;
+
+                }
+                else
+                {
+                   document.getElementById("submit").disabled = false;
+ 
+                }
+            }
         </script>
         <style>
             *{
@@ -103,18 +116,19 @@
             height: 100px
 
         }
-        .search,.station,.logout{
+        .search,.station,.logout,.home{
             display: inline-block
         }
         .station input[type="submit"]{
             width: 220px;
             margin: 20px;
-            margin-right: 620px;
+            margin-right: 500px;
             margin-left: 30px
 
         }
-        .station{
-            float: left
+        .station,.home{
+            float: left;
+            
         }
         .search input[type="text"]{
             width: 500px;
@@ -122,18 +136,23 @@
             padding: 10px;
             font-size: 30px;
         }
+      .home{
+                margin: 20px;
+                margin-right: 250px;
+                margin-left: 50px
+            }
         .search{
             margin-top: 20px
         }
      button{
-                    width: 25%;
-                    padding: 2%;
-                    margin: 3%;
-                    font-size: 20px;
-                    background-color: #4d4d4d;
-                    color: white;
-                    border:none;
-                    margin-left: 37%;
+            width: 25%;
+            padding: 2%;
+            margin: 3%;
+            font-size: 20px;
+            background-color: #4d4d4d;
+            color: white;
+            border:none;
+            margin-left: 37%;
             }
             .container{
                 margin-top: 250px;
@@ -154,12 +173,15 @@
           </div>
 
         <div class="menu">
+            <form class="home" action="Home.jsp">
+            <input type="submit" value="Home" />
+            </form>
         <form class="station" action="station.html">
             <input type="submit" value="Add TV Station" />
         </form>
         <form class="search" action="search">
-            <input type="text" placeholder="Search" name="search">
-            <input type="submit" value="Search">
+            <input type="text" placeholder="Search" name="search" id="search" onkeyup="check()">
+            <input type="submit" id="submit" value="Search" disabled="disabled">
         </form>
         <form class="logout" action="logout">
              <input type="submit" value="Logout"/>

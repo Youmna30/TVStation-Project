@@ -12,6 +12,21 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Results</title>
+        <script>
+               function check(){
+                var x = document.getElementById("search").value;
+                if(x=="")
+                {
+                    document.getElementById("submit").disabled = true;
+
+                }
+                else
+                {
+                   document.getElementById("submit").disabled = false;
+ 
+                }
+            }
+        </script>
         <style>
             *{
                 margin:0;
@@ -72,18 +87,23 @@
                 height: 100px
 
             }
-            .search,.station,.logout{
+            .search,.station,.logout,.home{
                 display: inline-block
             }
             .station input[type="submit"]{
                 width: 220px;
                 margin: 20px;
-                margin-right: 620px;
+                margin-right: 500px;
                 margin-left: 30px
                 
             }
-            .station{
+            .station, .home{
                 float: left
+            }
+            .home{
+                margin: 20px;
+                margin-right: 250px;
+                margin-left: 50px
             }
             .search input[type="text"]{
                 width: 500px;
@@ -99,6 +119,10 @@
                 margin: 20px;
                 margin-right: 30px
             }
+            p{
+               color: #555555;
+               font-size: 25px;
+            }
         </style>
     </head>
     <body>
@@ -106,12 +130,15 @@
             <span> TV STATIONS</span>
         </div>
         <div class="menu">
+            <form class="home" action="Home.jsp">
+            <input type="submit" value="Home" />
+            </form>
         <form class="station" action="station.html">
             <input type="submit" value="Add TV Station" />
         </form>
         <form class="search" action="search">
-            <input type="text" placeholder="Search" name="search">
-            <input type="submit" value="Search">
+            <input type="text" placeholder="Search" name="search" id="search" onkeyup="check()">
+            <input type="submit" value="Search" id="submit" disabled="disabled">
         </form>
         <form class="logout" action="logout">
              <input type="submit" value="Logout"/>
@@ -120,8 +147,25 @@
 
         <%
             String result = (String)request.getAttribute("json");
+            if(result.equals("error"))
+            {%>
+               <div class="container">
+                <p>Invalid input</p>
+            </div>
+            <%}
+            else
+            {
             JSONObject js=new JSONObject(result);
             JSONArray items = js.getJSONArray("items");
+            if(items.length() == 0){
+            %>
+            <div class="container">
+                <p>No Results Found</p>
+            </div>
+            <%
+            }
+            else
+{
             for (int i = 0; i < items.length(); i++) {
                 JSONObject videoObject = items.getJSONObject(i);
                 JSONObject videoLink = videoObject.getJSONObject("id");
@@ -141,7 +185,8 @@
                 </div>
                 <%
             }
-
+}
+}
         %>
     </body>
 </html>
