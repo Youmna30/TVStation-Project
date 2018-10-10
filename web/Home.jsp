@@ -26,30 +26,145 @@
                    // document.getElementById(id).innerHTML=xmlhttp.responseText;
                    var x = xmlhttp.responseText;
                    console.log(x);
-                   document.getElementById("msg").innerHTML='<iframe width="420" height="345" src="'+x+'"> </iframe>';
+                   document.getElementById(id).innerHTML='<iframe width="420" height="345" src="'+x+'" allowfullscreen="allowfullscreen"> </iframe>';
                 }
 
                 }; 
             }
-                   </script>
-                   <style>
-                       
-                   </style>
+        </script>
+        <style>
+            *{
+                margin: 0;
+                padding: 0;
+            }
+        body{
+            background-color: #4d4d4d;
+            }
+       .header{
+            color: white;
+            font-style: italic;
+            font-size: 100px;
+              }
+                
+       .name{
+            float: left;
+            margin-top: 20px;
+            margin-left: 10px;
+            position: absolute;
+                
+            }
+     .logout{
+                float: right;
+                margin: 20px;
+                margin-right: 30px
+            }
+           table{
+                 border-collapse: collapse;
+                 background-color: white;
+                 display: inline-block;
+                 width:500px;
+                 margin:20px
+
+            }
+            tr,td{
+               border: 2px solid black; 
+
+            }
+            th,tr,td{
+                    padding: 15px;
+                    width: 500px;
+
+            }
+            th,td{
+                color:#555555;
+                font-size: 25px
+            }
+        input[type="submit"],input[type="text"]{
+            width: 120px;
+            height: 62px; 
+        }
+         input[type="submit"]{
+            background-color: #e8e8e8;
+            color: #555555;
+            font-style: italic;
+            font-size: 30px;
+            border: solid 2px #555555;
+            border-radius: 20px;
+        }
+    input[type="submit"]:hover{
+         text-decoration: underline;
+
+        }
+        .menu{
+            margin-top: 130px;
+            position: absolute;
+            background-color: #555555;
+            width: 100%;
+            height: 100px
+
+        }
+        .search,.station,.logout{
+            display: inline-block
+        }
+        .station input[type="submit"]{
+            width: 220px;
+            margin: 20px;
+            margin-right: 620px;
+            margin-left: 30px
+
+        }
+        .station{
+            float: left
+        }
+        .search input[type="text"]{
+            width: 500px;
+            height: 30px;
+            padding: 10px;
+            font-size: 30px;
+        }
+        .search{
+            margin-top: 20px
+        }
+     button{
+                    width: 25%;
+                    padding: 2%;
+                    margin: 3%;
+                    font-size: 20px;
+                    background-color: #4d4d4d;
+                    color: white;
+                    border:none;
+                    margin-left: 37%;
+            }
+            .container{
+                margin-top: 250px;
+                position: absolute
+            }
+            
+            
+     
+        </style>
     </head>
     <body>
          <%
             String email=request.getParameter("email");
             session.setAttribute("UName", email);
          %>
-        <a href="station.html">Add TV Station</a>
-        <form action="search">
+          <div class="name">
+            <span class="header"> TV STATIONS</span>
+          </div>
+
+        <div class="menu">
+        <form class="station" action="station.html">
+            <input type="submit" value="Add TV Station" />
+        </form>
+        <form class="search" action="search">
             <input type="text" placeholder="Search" name="search">
             <input type="submit" value="Search">
         </form>
-      
-        <form action="logout">
+        <form class="logout" action="logout">
              <input type="submit" value="Logout"/>
-                </form>
+        </form>
+        </div>
         <%
           DBConnection connection = new DBConnection();
           Connection conn = connection.getConnection();
@@ -60,11 +175,9 @@
           stmt = conn.createStatement();
           ResultSet rs=stmt.executeQuery(query);
           %>
-          <table>
-                         <tr>
-                             <th>TV Stations</th>
-                         </tr>
+          <div class="container">
           <%
+          
           boolean empty=true;
           while(rs.next())
           {
@@ -74,18 +187,23 @@
               url=rs.getString("url");
               country=rs.getString("country");
               %>
+               <table>
+                         <tr>
+                             <th><% out.print(name);%></th>
+                         </tr>
                <tr>
-                   <td id="<%= id %>">
-                         <span>Name: <% out.print(name);%></span><br>
+                   <td>
                          <span>Country: <% out.print(country);%></span><br>
                          <button onclick="watch(<%= id %>)"> Watch </button>
-                         <div id="msg"></div>
+                         <div id=<%= id %>></div>
                    </td>
                </tr>
+               </table>
+
               <%
           }
            %>
-           </table>
+           </div>
            <%
           if(empty)
           {

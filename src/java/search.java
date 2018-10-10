@@ -57,33 +57,13 @@ public class search extends HttpServlet {
 
                 recvbuff += recv;
             }
-            System.out.println(recvbuff);
             buffread.close();
 
-            JSONObject js=new JSONObject(recvbuff);
-            //JSONObject j=js.getJSONObject("kind");
-           JSONArray items = js.getJSONArray("items"); // this is the "items: [ ] part
-            /*for (int i = 0; i < items.length(); i++) {
-                JSONObject videoObject = items.getJSONObject(i);
-                JSONObject obj = videoObject.getJSONObject("id");
-
-               // String title = videoObject.getString("title");
-                String videoId = obj.getString("videoId");
-                System.out.println("id is"+videoId);
-            }*/
-         /*  if(js.length() == 0){
-               System.out.println("emptyy");
-           }
-           else{
-           System.out.println(js.get("etag"));videoIdkind
-
-
-           }*/
-            //System.out.println("kiiiiiiiind"+j.getString("kind"));
-            request.setAttribute("json", recvbuff);
+          
+          
+        request.setAttribute("json", recvbuff);
         RequestDispatcher rd1= request.getRequestDispatcher("resultSearch.jsp");
         rd1.forward(request, response);
-            out.print("heeeeey");
         }
     }
 
