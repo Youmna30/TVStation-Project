@@ -1,10 +1,13 @@
+package Controller;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
 
-import Database.DBConnection;
+import Model.DBConnection;
+import Model.User;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
@@ -39,76 +42,23 @@ public class check extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException, ClassNotFoundException, SQLException {
+            throws ServletException, IOException, SQLException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            DBConnection connection = new DBConnection();
-    
+            /* TODO output your page here. You may use following sample code. */  
             String name =request.getParameter("name");
             String email=request.getParameter("email");
             String mobile=request.getParameter("mobile");
             String password=request.getParameter("password");
-            final Pattern EMAIL_REGEX=Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
-            final Pattern MOBILE_REGEX=Pattern.compile("^01[0-2]{1}[0-9]{8}", Pattern.CASE_INSENSITIVE);
-            final Pattern NAME_REGEX=Pattern.compile("^[a-zA-Z]+(([a-zA-Z ])?[a-zA-Z]*)*$", Pattern.CASE_INSENSITIVE);
-
-                                                        
-
-
-            Matcher m = EMAIL_REGEX.matcher(email);
-            boolean check = false;
-            if(!m.find())
+            User user = new User(name,email,mobile,password);
+            String check=user.checkValidation(user);
+            if(check.equals(""))
             {
-                check=true;
-                out.print("Enter a valid Email <br>");
-               
+              String result = user.addUser(user);
+              out.print(result);
             }
-            m=MOBILE_REGEX.matcher(mobile);
-            if(!m.find())
-            {
-                check=true;
-              out.print("Enter a valid Mobile Number <br>");
-            }
-            m= NAME_REGEX.matcher(name);
-            if(!m.find())
-            {
-                check=true;
-               out.print("Enter a valid Name");
-            }
-            
-            if(check == false)
-            {
-              
-                Statement stmt;
-                String query;
-                query="select * from user where email = '"+email+"'";
-                
-                try (Connection conn = connection.getConnection()) {
-                    stmt = conn.createStatement();
-                    ResultSet rs=stmt.executeQuery(query);
-                    if(rs.next())
-                    {
-                        if(rs.getString("flag").equals("0"))
-                        {
-                          out.print("Wait for confirmation");
-                        }
-                        else
-                        {
-                          out.print("You are already a user");
-                        }
-                        conn.close();
-                    }
-                    else{
-                    query ="insert into user(name,email,mobile,password) values('"+name+"','"+email+"','"+mobile+"','"+password+"')";
-                    stmt = conn.createStatement();
-                    stmt.executeUpdate(query);
-                    conn.close();
-                    }
-                }
-                
-               stmt.close();
-  
+            else{
+            out.print(check);
             }
             
 
@@ -129,8 +79,6 @@ public class check extends HttpServlet {
             throws ServletException, IOException {
         try {
             processRequest(request, response);
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(check.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(check.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -149,8 +97,6 @@ public class check extends HttpServlet {
             throws ServletException, IOException {
         try {
             processRequest(request, response);
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(check.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(check.class.getName()).log(Level.SEVERE, null, ex);
         }

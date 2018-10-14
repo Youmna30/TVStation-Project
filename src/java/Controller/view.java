@@ -1,13 +1,17 @@
+package Controller;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
 
-import Database.DBConnection;
+import Model.DBConnection;
+import Model.TVStation;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Level;
@@ -22,8 +26,8 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author BEST WAY
  */
-@WebServlet(urlPatterns = {"/reject"})
-public class reject extends HttpServlet {
+@WebServlet(urlPatterns = {"/view"})
+public class view extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -40,12 +44,16 @@ public class reject extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
           int id=Integer.parseInt(request.getParameter("id"));
-          Connection conn=DBConnection.getConnection();
-          String query="delete from user where id='"+id+"'";
-          Statement stmt=conn.createStatement();
-          stmt.executeUpdate(query);
-           out.print("Your deleted the user, successfully");
-
+          TVStation tvStation = new TVStation();
+          String result = tvStation.getUrl(id);
+          if(result.equals(""))
+          {
+              out.print("No Station to watch");
+          }
+          else{
+         
+              out.print(result);
+          }
 
         }
     }
@@ -65,7 +73,7 @@ public class reject extends HttpServlet {
         try {
             processRequest(request, response);
         } catch (SQLException ex) {
-            Logger.getLogger(reject.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(view.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -83,7 +91,7 @@ public class reject extends HttpServlet {
         try {
             processRequest(request, response);
         } catch (SQLException ex) {
-            Logger.getLogger(reject.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(view.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

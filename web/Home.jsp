@@ -4,10 +4,13 @@
     Author     : BEST WAY
 --%>
 
+<%@page import="Model.User"%>
+<%@page import="java.util.ArrayList"%>
+<%@page import="Model.TVStation"%>
 <%@page import="java.sql.ResultSet"%>
 <%@page import="java.sql.Statement"%>
 <%@page import="java.sql.Connection"%>
-<%@page import="Database.DBConnection"%>
+<%@page import="Model.DBConnection"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -25,8 +28,14 @@
                 if(this.readyState===4&&this.status===200){
                    // document.getElementById(id).innerHTML=xmlhttp.responseText;
                    var x = xmlhttp.responseText;
-                   console.log(x);
+                   if(x == "No Station to watch")
+                   {
+                      document.getElementById(id).innerHTML= x;
+                   }
+                   else
+                   {
                    document.getElementById(id).innerHTML='<iframe width="420" height="345" src="'+x+'" allowfullscreen="allowfullscreen"> </iframe>';
+                   }
                 }
 
                 }; 
@@ -76,7 +85,7 @@
                  background-color: white;
                  display: inline-block;
                  width:500px;
-                 margin:20px
+                 margin:20px;
 
             }
             tr,td{
@@ -86,6 +95,7 @@
             th,tr,td{
                     padding: 15px;
                     width: 500px;
+                                       
 
             }
             th,td{
@@ -157,15 +167,16 @@
             .container{
                 margin-top: 250px;
                 position: absolute
-            }
-            
+     
+                   }
+
             
      
         </style>
     </head>
     <body>
          <%
-            String email=request.getParameter("email");
+            String email = request.getParameter("email");
             session.setAttribute("UName", email);
          %>
           <div class="name">
@@ -187,58 +198,46 @@
              <input type="submit" value="Logout"/>
         </form>
         </div>
-        <%
-          DBConnection connection = new DBConnection();
-          Connection conn = connection.getConnection();
-          String query,name,url,country;
-          int id,userId;
-          Statement stmt;
-          query= "select * from station where flag = '1'";
-          stmt = conn.createStatement();
-          ResultSet rs=stmt.executeQuery(query);
-          %>
+
           <div class="container">
           <%
-          
-          boolean empty=true;
-          while(rs.next())
+          DBConnection connection = new DBConnection();
+          ArrayList<TVStation> allStations = new ArrayList<>();
+          allStations = connection.getAllStation(1);
+          if(allStations.size() == 0)
           {
-              empty=false;
-              id=rs.getInt("idstation");
-              name=rs.getString("name");
-              url=rs.getString("url");
-              country=rs.getString("country");
-              %>
-               <table>
+          %>
+                     <span>No Added TV Stations</span>
+          <%
+          }
+          else{
+              for(int i=0;i<allStations.size();i++)
+              {
+                User user = new User();
+                user=connection.getUserById(allStations.get(i).getUserId());
+                %>
+                 <table>
                          <tr>
-                             <th><% out.print(name);%></th>
+                             <th><% out.print(allStations.get(i).getName());%></th>
                          </tr>
                <tr>
-                   <td>
-                         <span>Country: <% out.print(country);%></span><br>
-                         <button onclick="watch(<%= id %>)"> Watch </button>
-                         <div id=<%= id %>></div>
+                   <td colspan=6>
+                       <span>Country: <% out.print(allStations.get(i).getCountry());%></span><br>
+                        <span>Added by: <% out.print(user.getEmail());%></span><br>
+                       <button onclick="watch(<%= allStations.get(i).getId() %>)"> Watch </button>
+                         <span class="show"id=<%= allStations.get(i).getId() %>></span>
                    </td>
                </tr>
                </table>
 
-              <%
-          }
-           %>
-           </div>
-           <%
-          if(empty)
-          {
-           %>
-          <span>No Added TV Stations</span>
-           <% 
-               rs.close();
-               stmt.close();
-           }
-          
-          
-          %>
 
+                <%
+              }
+              }
+         %>
+              
+          
+      
           
           
             

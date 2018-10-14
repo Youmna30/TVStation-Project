@@ -1,16 +1,21 @@
+package Controller;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
 
-import java.io.BufferedReader;
+import Model.DBConnection;
+import Model.TVStation;
+import Model.User;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLConnection;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
@@ -19,16 +24,13 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  *
  * @author BEST WAY
  */
-@WebServlet(urlPatterns = {"/search"})
-public class search extends HttpServlet {
+@WebServlet(urlPatterns = {"/checkLogin"})
+public class checkLogin extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -40,36 +42,17 @@ public class search extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException, JSONException {
+            throws ServletException, IOException, SQLException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
-            String searchQuery=request.getParameter("search");
-            String recv;
-            String recvbuff="";
-            String query="https://www.googleapis.com/youtube/v3/search?q="+searchQuery+"&key=AIzaSyCRJqo_zdv1gDIsSkczJOFTnKcm2coSWEA&maxResults=20&part=snippet&type=video";
-            URL jsonpage = new URL(query);
-            HttpURLConnection urlcon = (HttpURLConnection) jsonpage.openConnection();
-            if(urlcon.getResponseCode() != 200){
-                request.setAttribute("json", "error");
-                RequestDispatcher rd1= request.getRequestDispatcher("resultSearch.jsp");
-                rd1.forward(request, response);
-            }
-
-            BufferedReader buffread = new BufferedReader(new InputStreamReader(urlcon.getInputStream()));
-            boolean results=false;
-            while ((recv = buffread.readLine()) != null)
-            {
-                results=true;
-               //System.out.println(buffread.readLine());
-
-                recvbuff += recv;
-            }
-            buffread.close();
-          
-        request.setAttribute("json", recvbuff);
-        RequestDispatcher rd1= request.getRequestDispatcher("resultSearch.jsp");
-        rd1.forward(request, response);
+           String email=request.getParameter("email");
+           String password=request.getParameter("password");
+           User user = new User();
+           String result=user.loginValidation(email, password);
+           out.print(result);
+           
+      
         }
     }
 
@@ -87,8 +70,8 @@ public class search extends HttpServlet {
             throws ServletException, IOException {
         try {
             processRequest(request, response);
-        } catch (JSONException ex) {
-            Logger.getLogger(search.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(checkLogin.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -105,8 +88,8 @@ public class search extends HttpServlet {
             throws ServletException, IOException {
         try {
             processRequest(request, response);
-        } catch (JSONException ex) {
-            Logger.getLogger(search.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(checkLogin.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

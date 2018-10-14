@@ -116,13 +116,13 @@
     <div class="form">
         <h1>Welcome</h1>
         <label>Name</label><br>
-        <input type="text" name="name" id="name" required><br>
+        <input type="text" name="name" id="name" required placeholder="Enter your name"><br>
         <label>Email</label><br>
-        <input type="text" name="email" id="email" required><br>
+        <input type="text" name="email" id="email" required placeholder="example@example.com"><br>
         <label>Password</label><br>
-        <input type="password" name="pasword" id="password" required><br>
+        <input type="password" name="pasword" id="password" required placeholder="at least 6 characters"><br>
         <label>Mobile Number</label><br>
-        <input type="text" name="mobile" id="mobile" required><br>
+        <input type="text" name="mobile" id="mobile" required placeholder="01*********"><br>
         <input type="submit" onclick="sendreq()"  value="Sign Up"/><br>                  
         <div id="show_div"></div>   
     </div>

@@ -4,10 +4,14 @@
     Author     : BEST WAY
 --%>
 
+<%@page import="Model.TVStation"%>
+<%@page import="Model.TVStation"%>
+<%@page import="java.util.ArrayList"%>
+<%@page import="Model.User"%>
 <%@page import="java.sql.ResultSet"%>
 <%@page import="java.sql.Statement"%>
 <%@page import="java.sql.Connection"%>
-<%@page import="Database.DBConnection"%>
+<%@page import="Model.DBConnection"%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -165,144 +169,87 @@
         
         <%
           DBConnection connection = new DBConnection();
-          Connection conn = connection.getConnection();
-          String query, name,email,mobile,url,country;
-          int id,idUser;
-          Statement stmt;
-          query= "select * from user where flag = '0'";
-          stmt = conn.createStatement();
-          ResultSet rs=stmt.executeQuery(query);
-          boolean empty=true;
+          ArrayList<User> allUsers = new ArrayList<>();
+          allUsers=connection.getAllUnAcceptedUsers();
           %>
-                     <table>
-                         <tr>
-                             <th>Users</th>
-                         </tr>
-<%
-          while(rs.next()){
-              empty=false;
-              id=rs.getInt("id");
-              name=rs.getString("name");
-              email=rs.getString("email");
-              mobile=rs.getString("mobile");
-           %>
-               <tr>
-                   <td id="<%= id %>">
-                         <span class="text">Name: <% out.print(name);%></span><br>
-                         <span class="text">Email: <% out.print(email);%></span><br>
-                         <span class="text">Mobile: <% out.print(mobile);%></span><br><br>
-                         <button class="accept" onclick="accept(<%= id %>)">Accept</button>
-                         <button class="reject" onclick="reject(<%= id%>)">Reject</button><br>
-                   </td>
-               </tr>
-              <%
-          }
-           %>
-           <%
-          if(empty)
-          {%>
-          <tr>
+                          <table>
+
+                    <tr>
+                        <th> Users </th>
+                    </tr>
+          <%
+          if(allUsers.size() == 0){
+              %>
+              <tr>
               <td>
                   <span class="text">
                   No new Users
                   </span>
               </td>
           </tr>
-           </table>
-
-          <% 
-              if(rs != null)
-              {
-               rs.close();
-              }
-              if(stmt != null)
-              {
-               stmt.close();
-              }
-              if(conn != null)
-              {
-               conn.close();
-              }
-           }
+              <%
           
-          
-          %>
-          <table>
+          }
+          else{
+               for(int i=0;i<allUsers.size();i++)
+                {
+      %>
+                 <tr>
+                     <td id="<%= allUsers.get(i).getId() %>">
+                         <span class="text">Name: <% out.print(allUsers.get(i).getName());%></span><br>
+                         <span class="text">Email: <% out.print(allUsers.get(i).getEmail());%></span><br>
+                         <span class="text">Mobile: <% out.print(allUsers.get(i).getMobile());%></span><br><br>
+                         <button class="accept" onclick="accept(<%= allUsers.get(i).getId()%>)">Accept</button>
+                         <button class="reject" onclick="reject(<%= allUsers.get(i).getId()%>)">Reject</button><br>
+                   </td>
+               </tr>
+             <%
+                }
+              }
+              %>
+              </table>
+              <table>
               <tr>  
                  <th>Stations</th>
               </tr>
           <%
-          DBConnection connection1 = new DBConnection();
-          Connection conn1 = connection1.getConnection();
-          empty=true;
-          Statement stmt1 = conn1.createStatement();
-          Statement stmt2 = conn1.createStatement();
-          query= "select * from station where flag = '0'";
-          ResultSet rs1=stmt1.executeQuery(query);
-          while(rs1.next()){
-              empty=false;
-              id=rs1.getInt("idstation");
-              name=rs1.getString("name");
-              url=rs1.getString("url");
-              country=rs1.getString("country");
-              idUser=rs1.getInt("userId");
-              ResultSet rs2=stmt2.executeQuery("select email from user where id = '"+idUser+"'");
-              if(rs2.next())
-              {
-              email=rs2.getString("email");
-              }
-              else{
-              email="None";
-              }
-           %>
-               <tr>
-                   <td id="<%= id %>">
-                         <span class="text">Name: <% out.print(name);%></span><br>
-                         <span class="text">URL: <% out.print(url);%></span><br>
-                         <span class="text">Country: <% out.print(country);%></span><br>
-                         <span>Added By: <% out.print(email);%></span><br><br>
-                         <button class="accept" onclick="acceptStation(<%= id %>)">Accept</button>
-                         <button class="reject" onclick="rejectStation(<%= id%>)">Reject</button><br>
-                   </td>
-               </tr>
-              <%
-              if(rs2 != null)
-          {
-          rs2.close();
-          }
-          if(stmt2 != null)
-          {
-              stmt2.close();
-          }    
-          }
-           %>
-           <%
-          if(rs1 != null)
-          {
-          rs1.close();
-          }
-          if(stmt1 != null)
-          {
-              stmt1.close();
-          }
-          if(conn1 != null)
-          {
-          conn1.close();
-          }
-          if(empty)
-          {%>
-          <tr>
+          ArrayList<TVStation> allStations = new ArrayList<>();
+          allStations=connection.getAllStation(0);
+          if(allStations.size() == 0){
+            %>
+              <tr>
               <td>
                   <span class="text">No new Stations</span>
               </td>
           </tr>
+          <%
+          }
+         else{
+              for(int i =0;i<allStations.size();i++)
+               {
+                User user = new User();
+                user=connection.getUserById(allStations.get(i).getUserId());
+                %>
+                 <tr>
+                     <td id="<%= allStations.get(i).getId() %>">
+                         <span class="text">Name: <% out.print(allStations.get(i).getName());%></span><br>
+                         <span class="text">URL: <% out.print(allStations.get(i).getUrl());%></span><br>
+                         <span class="text">Country: <% out.print(allStations.get(i).getCountry());%></span><br>
+                         <span>Added By: <% out.print(user.getEmail());%></span><br><br>
+                         <button class="accept" onclick="acceptStation(<%= allStations.get(i).getId() %>)">Accept</button>
+                         <button class="reject" onclick="rejectStation(<%= allStations.get(i).getId() %>)">Reject</button><br>
+                   </td>
+               </tr>
+
+                <%
+                 }
+                 }
+               %>
+        
                      </table>
 
-           <% 
+            
                
-           }
        
-           
-           %>
-    </body>
+         </body>
 </html>

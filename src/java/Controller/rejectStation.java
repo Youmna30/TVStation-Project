@@ -1,10 +1,13 @@
+package Controller;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
 
-import Database.DBConnection;
+import Model.DBConnection;
+import Model.TVStation;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
@@ -22,8 +25,8 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author BEST WAY
  */
-@WebServlet(urlPatterns = {"/accept"})
-public class accept extends HttpServlet {
+@WebServlet(urlPatterns = {"/rejectStation"})
+public class rejectStation extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -38,16 +41,11 @@ public class accept extends HttpServlet {
             throws ServletException, IOException, SQLException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
+            /* TODO output your page here. You may use following sample code. */   
          int id=Integer.parseInt(request.getParameter("id"));
-         Connection conn=DBConnection.getConnection();
-         String query="update user set flag='1' where id='"+id+"'";
-         Statement stmt=conn.createStatement();
-         stmt.executeUpdate(query);
-         out.print("You accepted the user,Successfully");
-
-         
-
+         TVStation tvStation = new TVStation();
+         String result = tvStation.reject(id);
+         out.print(result);
         }
     }
 
@@ -66,7 +64,7 @@ public class accept extends HttpServlet {
         try {
             processRequest(request, response);
         } catch (SQLException ex) {
-            Logger.getLogger(accept.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(rejectStation.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -84,7 +82,7 @@ public class accept extends HttpServlet {
         try {
             processRequest(request, response);
         } catch (SQLException ex) {
-            Logger.getLogger(accept.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(rejectStation.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

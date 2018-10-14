@@ -1,19 +1,20 @@
+package Controller;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
 
-import Database.DBConnection;
+import Model.DBConnection;
+import Model.User;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -24,8 +25,8 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author BEST WAY
  */
-@WebServlet(urlPatterns = {"/checkLogin"})
-public class checkLogin extends HttpServlet {
+@WebServlet(urlPatterns = {"/reject"})
+public class reject extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -41,46 +42,9 @@ public class checkLogin extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
-           DBConnection connection = new DBConnection();
-           String email=request.getParameter("email");
-           String password=request.getParameter("password");
-            Statement stmt;
-            String query;
-            query="select * from user where email = '"+email+"'";
-             try (Connection conn = connection.getConnection()) {
-                    stmt = conn.createStatement();
-                    ResultSet rs=stmt.executeQuery(query);
-                    if(rs.next())
-                    {
-                        if(rs.getString("flag").equals("0"))
-                        {
-                          out.print("Wait for confirmation");
-                        }
-                        else
-                        {
-                          if(password.equals(rs.getString("password")))
-                          {
-                              if(email.equals("Admin"))
-                              {
-                                  out.print("Admin");
-                              }
-                              else
-                              {
-                                  out.print("Done");
-                              }
-                          }
-                          else{
-                           out.print("Wrong password");
-                          }
-                        }
-                        conn.close();
-                    }
-                    else{
-                       out.print("You aren't a User, SignUp please ");
-
-                    }
-             }
-
+          int id=Integer.parseInt(request.getParameter("id"));
+          User user = new User();
+          out.print(user.reject(id));
 
 
         }
@@ -101,7 +65,7 @@ public class checkLogin extends HttpServlet {
         try {
             processRequest(request, response);
         } catch (SQLException ex) {
-            Logger.getLogger(checkLogin.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(reject.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -119,7 +83,7 @@ public class checkLogin extends HttpServlet {
         try {
             processRequest(request, response);
         } catch (SQLException ex) {
-            Logger.getLogger(checkLogin.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(reject.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

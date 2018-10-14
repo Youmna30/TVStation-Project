@@ -1,10 +1,13 @@
+package Controller;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
 
-import Database.DBConnection;
+import Model.DBConnection;
+import Model.TVStation;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
@@ -45,75 +48,18 @@ public class addStation extends HttpServlet {
             /* TODO output your page here. You may use following sample code. */  
            HttpSession session = request.getSession(true);
            String email=(String) session.getAttribute("UName");
-           DBConnection connection = new DBConnection();
            String name=request.getParameter("name");
            String url=request.getParameter("url");
            String country=request.getParameter("country");
-           final Pattern NAME_REGEX=Pattern.compile("^(?:[A-Za-z]+)(?:[A-Za-z0-9 ]*)$", Pattern.CASE_INSENSITIVE);
-           final Pattern URL_REGEX=Pattern.compile("http(?:s?):\\/\\/(?:www\\.)?youtu(?:be\\.com\\/watch\\?v=|\\.be\\/)([\\w\\-\\_]*)(&(amp;)?‌​[\\w\\?‌​=]*)?", Pattern.CASE_INSENSITIVE);
-           final Pattern COUNTRY_REGEX=Pattern.compile("^[a-zA-Z ]*", Pattern.CASE_INSENSITIVE);
-           
-           boolean check=false;
-           Matcher m = NAME_REGEX.matcher(name);
-           if(!m.find())
-           {
-               check=true;
-               out.print("Enter a valid Name <br>");
-               
-           }
-           m=URL_REGEX.matcher(url);
-           if(!m.find())
-           {
-             check=true;
-             out.print("Enter a valid URL <br>");
-           }
-           m=COUNTRY_REGEX.matcher(country);
-           if(!m.find())
-           {
-               check=true;
-               out.print("Enter a valid Country <br>");
-           }
-  
-            if(check == false)
+           TVStation tvStation = new TVStation(name,url,country);
+           String check = tvStation.checkValidation(tvStation);
+            if(check.equals("")){
+                String result = tvStation.addStation(tvStation, email);
+                out.print(result);
+            }
+            else
             {
-              
-                Statement stmt;
-                String query;
-                query="select * from station where url = '"+url+"'";
-                
-                try (Connection conn = connection.getConnection()) {
-                    stmt = conn.createStatement();
-                    ResultSet rs=stmt.executeQuery(query);
-                    if(rs.next())
-                    {
-                        if(rs.getString("flag").equals("0"))
-                        {
-                          out.print("Wait for confirmation");
-                        }
-                        else
-                        {
-                          out.print("This station already existed");
-                        }
-                    }
-                    else{
-                    query="select * from user where email = '"+email+"'";
-                    ResultSet rs1=stmt.executeQuery(query);
-                    int userId;
-                    if(rs1.next())
-                    {
-                    userId=rs1.getInt("id");
-                    query ="insert into station(name,url,userId,country) values('"+name+"','"+url+"','"+userId+"','"+country+"')";
-
-                    }
-                    rs.close();
-                    rs1.close();
-                    stmt.executeUpdate(query);
-                    conn.close();
-                    }
-                }
-                
-               stmt.close();
-  
+                out.print(check);
             }
             
 

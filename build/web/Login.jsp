@@ -9,6 +9,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        
         <title>Login</title>
          <script type="text/javascript">
            function sendreq()
@@ -118,9 +119,9 @@
         <div class="form">
             <h1>Welcome</h1>
         <label>Email</label><br>
-        <input type="text" name="email" id="email" required><br>
+        <input type="text" name="email" id="email" required placeholder="Enter Your Email"><br>
         <label>Password</label><br>
-        <input type="password" name="passowrd" id="password" required><br>
+        <input type="password" name="passowrd" id="password" required placeholder="Enter Your password"><br>
         <input type="submit" onclick="sendreq()" value="Login"><br> 
         <div id="show_div"></div>        
         </div>
